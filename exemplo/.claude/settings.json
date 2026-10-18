@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv --version)",
+      "Bash(uv run --no-project --python 3.12 *analise-dados*bootstrap.py*)",
+      "Bash(uv run --no-project --python 3.12 *analise-dados*stop.py*)",
+      "Bash(uv run --no-project --python .venv *analise-dados*banco.py*)",
+      "Bash(uv run --no-project --python .venv *analise-dados*validar.py*)",
+      "Bash(uv run --no-project --python .venv *analise-dados*relatorio.py*)",
+      "mcp__plugin_analise-dados_jupyter__*",
+      "mcp__banco__all_table_names",
+      "mcp__banco__filter_table_names",
+      "mcp__banco__schema_definitions",
+      "mcp__banco__list_databases",
+      "mcp__banco__list_tables",
+      "mcp__banco__list_columns"
+    ],
+    "deny": [
+      "Edit(./dados/**)",
+      "Read(./.env)"
+    ]
+  },
+  "env": {
+    "MCP_TIMEOUT": "90000"
+  }
+}

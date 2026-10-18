@@ -1,0 +1,14 @@
+{
+  "name": "analise-dados",
+  "description": "Plugins de análise de dados guiada com o Claude Code",
+  "owner": {
+    "name": "Fernando Figueiredo"
+  },
+  "plugins": [
+    {
+      "name": "analise-dados",
+      "source": "./plugins/analise-dados",
+      "description": "Análise de dados guiada em Jupyter: uma pergunta por vez, com revisão crítica, validação, relatório, painel e SQL"
+    }
+  ]
+}

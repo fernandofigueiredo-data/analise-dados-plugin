@@ -1,0 +1,37 @@
+[project]
+name = "analise-dados-ambiente"
+version = "1.0.0"
+description = "Ambiente Python dos projetos de análise do plugin analise-dados"
+requires-python = "==3.12.*"
+dependencies = [
+    # Lado Jupyter — faixas alinhadas com o jupyter-mcp-server fixado no .mcp.json.
+    # A real-time collaboration (jupyter-collaboration + pycrdt) é o que
+    # permite o MCP enxergar o notebook ao vivo.
+    "jupyterlab>=4.6,<4.7",
+    "jupyter-collaboration>=5.0,<5.1",
+    "jupyter-mcp-tools>=0.1.7",
+    "ipykernel",
+    "pycrdt",
+    # /validar e /relatorio — rodam o notebook num kernel novo e exportam HTML
+    "nbclient",
+    "nbconvert",
+    "nbformat",
+    # Lado análise de dados
+    "pandas",
+    "matplotlib",
+    "plotly",    # /painel — gráficos interativos
+    "duckdb",    # SQL direto em CSV/Parquet locais, sem servidor
+    "openpyxl",  # read_excel (.xlsx)
+    "pyarrow",   # read_parquet (.parquet)
+]
+
+# Drivers de banco: o bootstrap instala o extra certo lendo o esquema da DB_URL
+# no .env do projeto (postgresql://, bigquery://, duckdb:///, sqlite:///).
+[project.optional-dependencies]
+sql = ["sqlalchemy>=2.0,<2.1"]
+postgres = ["sqlalchemy>=2.0,<2.1", "psycopg[binary]"]
+bigquery = ["sqlalchemy>=2.0,<2.1", "sqlalchemy-bigquery", "google-cloud-bigquery", "db-dtypes"]
+duckdb = ["sqlalchemy>=2.0,<2.1", "duckdb-engine"]
+
+[tool.uv]
+package = false  # ambiente de análise, não um pacote instalável

@@ -1,0 +1,13 @@
+{
+  "name": "analise-dados",
+  "displayName": "Análise de Dados",
+  "version": "1.0.0",
+  "description": "Análise de dados guiada em Jupyter: uma pergunta por vez, com revisão crítica, validação do notebook, relatório, painel interativo e fontes SQL (Postgres, BigQuery, DuckDB)",
+  "author": {
+    "name": "Fernando Figueiredo"
+  },
+  "homepage": "https://github.com/fernandofigueiredo-data/analise-dados-plugin",
+  "repository": "https://github.com/fernandofigueiredo-data/analise-dados-plugin",
+  "license": "MIT",
+  "keywords": ["analise-de-dados", "jupyter", "pandas", "notebook", "sql", "dashboard"]
+}

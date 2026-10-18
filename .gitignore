@@ -1,0 +1,19 @@
+# Gerados ao rodar o exemplo (bootstrap, /validar, /relatorio, /painel)
+.venv/
+.runtime/
+saidas/*
+!saidas/.gitkeep
+.ipynb_checkpoints/
+.jupyter/
+.jupyter_ystore.db
+validar.log
+
+# Segredos e configurações locais
+.env
+.claude/settings.local.json
+
+# Python / sistema
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

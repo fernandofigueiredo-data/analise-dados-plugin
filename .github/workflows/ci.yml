@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash   # Git Bash no Windows: os mesmos comandos nos três sistemas
+
+env:
+  PYTHONUTF8: "1"   # reforço: os scripts já forçam UTF-8 na saída
+
+jobs:
+  template:
+    name: Template · ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv (o único pré-requisito do template)
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.20"
+          enable-cache: true
+
+      - name: Testes de unidade (regras, hooks, preparação do projeto, /banco)
+        run: uv run --no-project --python 3.12 -m unittest discover -s tests -v
+
+      - name: Bootstrap no projeto de exemplo (ambiente + Jupyter)
+        working-directory: exemplo
+        run: uv run --no-project --python 3.12 ../plugins/analise-dados/scripts/bootstrap.py
+
+      - name: Ciclo principal pelo Jupyter MCP (célula executada no kernel do .venv)
+        working-directory: exemplo
+        run: uv run --no-project --python 3.12 ../tests/mcp_fumaca.py
+
+      - name: /validar — notebook de exemplo roda do zero, sem desvio das regras
+        working-directory: exemplo
+        run: |
+          uv run --no-project --python .venv ../plugins/analise-dados/scripts/validar.py analise.ipynb | tee validar.log
+          ! grep -q "aviso(s) das regras de casa" validar.log
+
+      - name: /relatorio — HTML sem código
+        working-directory: exemplo
+        run: |
+          uv run --no-project --python .venv ../plugins/analise-dados/scripts/relatorio.py analise.ipynb
+          test -s saidas/relatorio-analise.html
+
+      - name: /painel — painel interativo a partir dos dados tratados
+        working-directory: exemplo
+        run: |
+          uv run --no-project --python .venv ../plugins/analise-dados/scripts/validar.py painel.ipynb
+          test -s saidas/painel.html
+
+      - name: Encerrar o Jupyter
+        if: always()
+        working-directory: exemplo
+        run: uv run --no-project --python 3.12 ../plugins/analise-dados/scripts/stop.py
+
+      - name: Guardar relatório e painel gerados
+        if: always() && matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: saidas-exemplo
+          path: |
+            exemplo/saidas/*.html
+            exemplo/.runtime/jupyter.log
+          if-no-files-found: ignore
+
+  plugin:
+    name: Manifestos do plugin e do marketplace
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Instalar o Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Validar plugin (estrito) e marketplace
+        run: |
+          claude plugin validate --strict plugins/analise-dados
+          claude plugin validate .

@@ -1,0 +1,13 @@
+# analise-dados (plugin)
+.venv/
+.runtime/
+saidas/*
+!saidas/.gitkeep
+.ipynb_checkpoints/
+__pycache__/
+.jupyter/
+.jupyter_ystore.db
+.env
+.claude/settings.local.json
+.DS_Store
+Thumbs.db

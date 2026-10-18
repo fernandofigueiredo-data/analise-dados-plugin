@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "jupyter": {
+      "command": "uvx",
+      "args": ["jupyter-mcp-server==2.2.4"],
+      "env": {
+        "ALLOW_IMG_OUTPUT": "true",
+        "START_NEW_CODE_SANDBOX": "false"
+      }
+    }
+  }
+}
