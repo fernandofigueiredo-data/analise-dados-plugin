@@ -1,0 +1,1 @@
+Use o plugin analise-dados: siga o comando /analise-dados:analise do começo ao fim. As perguntas do Passo 5 já estão respondidas pelo contexto acima — não pare para perguntar; registre o contexto e conduza a análise até a conclusão. No fim, rode o /analise-dados:validar e corrija o que ele apontar.

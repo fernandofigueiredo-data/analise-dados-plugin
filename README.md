@@ -57,6 +57,31 @@ O mesmo notebook também registra a decisão de tratamento (154 vendas sem regi�
 mantidas como "Não informada", em vez de apagadas) em
 [`exemplo/contexto.md`](exemplo/contexto.md), a memória que a próxima sessão lê.
 
+## Com e sem o plugin
+
+A mesma pergunta, os mesmos dados, o mesmo ambiente e o mesmo modelo
+(`claude-sonnet-5-5`), uma sessão sem o plugin e outra com ele. Os dois
+notebooks foram medidos pelo mesmo script e julgados às cegas (A/B sorteados).
+Protocolo, notebooks gerados e dados brutos em [`comparacao/`](comparacao/).
+
+| | Sem plugin | Com plugin |
+|---|---|---|
+| Nota de confiabilidade no julgamento cego (0–10) | 8 | 7 |
+| Números errados · causa sem base · pico lido como tendência | 0 · 0 · não | 0 · 0 · não |
+| Roda do zero num kernel novo | sim | sim |
+| Linhas por célula (média / máximo) | 9,8 / 16 | 3,3 / 8 |
+| Textos com `$` que quebra a renderização | 4 | 0 |
+| Contexto e decisões registrados · validado na sessão | não · não | sim · sim |
+| Custo da sessão (mesmo tempo: 2,6 min) | US$ 0,58 | US$ 0,79 |
+
+**Leitura honesta:** no conteúdo analítico, empate — o modelo já acerta o básico
+sem o plugin, e o avaliador cego deu um ponto a mais à versão sem ele, numa única
+execução. O ganho medido do plugin está na **forma e na rastreabilidade**: células
+revisáveis, nenhum texto quebrado para a diretoria (sem o plugin, o principal
+achado aparece assim no Jupyter: "R9,83mi,∗∗2,2vezes∗∗oSul…") e decisões
+registradas para a próxima sessão, a 35% a mais de custo. Os dois lados — inclusive
+o plugin — compararam meses pelo total sem ajustar pelos dias.
+
 ## Evidências técnicas
 
 | O que foi medido | Resultado |
@@ -142,6 +167,10 @@ O plugin fica instalado para o usuário, mas só age em pastas de análise (com
 - **Fechar uma sessão desliga o Jupyter** das outras sessões abertas no mesmo projeto.
 - **O hook em `edit_cell_source` é melhor esforço**: a ferramenta devolve só um
   diff; o `/validar` cobre o notebook inteiro no fim.
+- **A revisão crítica depende de o modelo seguir a skill.** Na
+  [comparação](comparacao/), o plugin não aplicou a regra de comparar meses por
+  dia nem mostrou o `n` em todas as tabelas; só as regras checadas por código
+  (tamanho de célula, `$`) são garantidas.
 - Textos, comandos e regras estão em **português**.
 
 ## Estrutura

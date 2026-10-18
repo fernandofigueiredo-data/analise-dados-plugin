@@ -1,0 +1,1 @@
+Crie um notebook Jupyter analise.ipynb nesta pasta com a análise completa, terminando com uma conclusão para a diretoria. Há um ambiente Python pronto em .venv (pandas, matplotlib, jupyter). Execute o notebook para que os resultados fiquem salvos nele. Não faça perguntas: trabalhe com o contexto acima.

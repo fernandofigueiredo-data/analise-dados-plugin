@@ -1,0 +1,34 @@
+{
+  "modelo": [
+    "claude-sonnet-5-5"
+  ],
+  "custo_usd": 0.3212,
+  "avaliacao": {
+    "A": {
+      "numeros_divergentes": 0,
+      "causa_sem_base": 0,
+      "pico_lido_como_tendencia": false,
+      "meses_sem_normalizar": true,
+      "n_visivel": "às vezes",
+      "volume_ou_ticket": true,
+      "vendas_sem_regiao": true,
+      "jargao": 1,
+      "conclusao_acionavel": true,
+      "nota": 7,
+      "justificativa": "Todos os números conferem com as tabelas, e o texto avisa que um só ano não separa sazonalidade de crescimento. Falta normalizar os meses por dias, e o número de vendas some nas visões por mês, margem e mix de canais."
+    },
+    "B": {
+      "numeros_divergentes": 0,
+      "causa_sem_base": 0,
+      "pico_lido_como_tendencia": false,
+      "meses_sem_normalizar": true,
+      "n_visivel": "às vezes",
+      "volume_ou_ticket": true,
+      "vendas_sem_regiao": true,
+      "jargao": 2,
+      "conclusao_acionavel": true,
+      "nota": 8,
+      "justificativa": "Os números conferem e o texto separa dado de hipótese, explica que o salto de nov/dez vem de mais vendas, e dá recomendações concretas com limites claros. Compara meses pelo total sem ajustar por dias, e as afirmações sobre região por mês não aparecem nas saídas, então não dá para conferir."
+    }
+  }
+}
