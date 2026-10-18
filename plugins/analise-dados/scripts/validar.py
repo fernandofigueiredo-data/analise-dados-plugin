@@ -57,9 +57,11 @@ def executar(caminho):
 def avisos_output(o):
     data = o.get("data", {})
     if o.output_type == "stream" and o.get("name") == "stderr":
-        m = re.search(r"(\w*(?:Warning|Error)): (.+)", o.text)
-        resumo = f"{m.group(1)}: {m.group(2)}" if m else o.text.strip().splitlines()[0]
-        return [f"emitiu um aviso do Python — {resumo[:90]}"]
+        # Só avisos de verdade (UserWarning, FutureWarning…) e erros. Recados
+        # informativos de pacotes no stderr — "Matplotlib is building the font
+        # cache" numa máquina nova, barras de progresso — não indicam problema.
+        m = re.search(r"(\w+(?:Warning|Error)): (.+)", o.text)
+        return [f"emitiu um aviso do Python — {m.group(1)}: {m.group(2)[:80]}"] if m else []
     if "text/html" in data:
         linhas = data["text/html"].count("<tr")
         return [f"tabela com ~{linhas} linhas no output — mostre .head() ou um top N"] \
