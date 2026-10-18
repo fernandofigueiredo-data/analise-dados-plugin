@@ -64,7 +64,7 @@ mantidas como "Não informada", em vez de apagadas) em
 | Início do servidor Jupyter MCP | **~125 s → 2,6 s**. A causa era o servidor esperando 120 s por um Jupyter que ainda não existia; resolvido com `START_NEW_CODE_SANDBOX=false` |
 | Kernel usado pelas células | Corrigido: um kernel `python3` do usuário ganhava do kernel do projeto e rodava as células no Python do sistema, sem as dependências |
 | Testes | 19 testes de unidade (regras, hooks, preparação do projeto, configuração de banco) + teste de fumaça que executa uma célula pelo Jupyter MCP |
-| CI | Workflow para Linux, macOS e Windows: bootstrap, ciclo pelo MCP, `/validar` sem avisos, `/relatorio`, `/painel`, validação estrita dos manifestos. Passos executados localmente no macOS; o status no GitHub está no selo acima |
+| CI | Passa em **Linux, macOS e Windows**: bootstrap do ambiente, ciclo pelo Jupyter MCP, `/validar` sem avisos, `/relatorio`, `/painel` e validação estrita dos manifestos (status no selo acima) |
 | Sessão real do Claude Code | Plugin carregado com `--plugin-dir`: regras injetadas no início, hook disparando nas duas regras, Jupyter desligado ao fechar |
 | Somente leitura nos bancos | `DELETE` bloqueado num arquivo DuckDB, tanto pela biblioteca do notebook quanto pelo servidor MCP. No Postgres, a conexão abre com transação somente leitura (sem teste contra banco real — ver limitações) |
 
