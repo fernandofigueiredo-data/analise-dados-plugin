@@ -1,7 +1,7 @@
 {
   "name": "analise-dados",
   "displayName": "Análise de Dados",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Análise de dados guiada em Jupyter: uma pergunta por vez, com revisão crítica, validação do notebook, relatório, painel interativo e fontes SQL (Postgres, BigQuery, DuckDB)",
   "author": {
     "name": "Fernando Figueiredo"

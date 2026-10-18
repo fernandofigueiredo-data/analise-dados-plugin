@@ -32,7 +32,7 @@ O método vira **regra executada pelo sistema**, não sugestão:
 | Hook `PostToolUse` em cada célula gravada | Código com mais de 10 linhas ou `$` sem escape no markdown → o Claude é avisado na hora e corrige |
 | Skills `revisao-critica` e `qualidade-dados` | Antes de interpretar: o `n` está visível? é share ou risco? é sazonalidade? os dados têm buracos? |
 | Subagente `revisor` (só lê) | Relê a análise pronta e aponta conclusões que não se sustentam, com célula, trecho e correção |
-| `/validar` | Roda o notebook num kernel novo, de cima a baixo, e confere as regras no notebook inteiro |
+| `/validar` | Roda o notebook num kernel novo, de cima a baixo, e confere as regras no notebook inteiro — inclusive soma por mês sem ajuste pelos dias e taxa sem contagem |
 | Subagente `editor` + `/relatorio` + `/painel` | Texto em linguagem de negócio; HTML sem código; painel interativo offline |
 | Permissões do projeto | `dados/` não pode ser editado; o `.env` (senhas de banco) não pode ser lido pelo Claude |
 
@@ -60,27 +60,37 @@ mantidas como "Não informada", em vez de apagadas) em
 ## Com e sem o plugin
 
 A mesma pergunta, os mesmos dados, o mesmo ambiente e o mesmo modelo
-(`claude-sonnet-5-5`), uma sessão sem o plugin e outra com ele. Os dois
-notebooks foram medidos pelo mesmo script e julgados às cegas (A/B sorteados).
-Protocolo, notebooks gerados e dados brutos em [`comparacao/`](comparacao/).
+(`claude-sonnet-5-5`): uma sessão sem o plugin e outra com ele, em duas rodadas.
+Os notebooks foram medidos pelo mesmo script e julgados às cegas, cada par nas
+duas ordens. Protocolo, notebooks gerados e dados brutos em
+[`comparacao/`](comparacao/).
 
 | | Sem plugin | Com plugin |
 |---|---|---|
-| Nota de confiabilidade no julgamento cego (0–10) | 8 | 7 |
-| Números errados · causa sem base · pico lido como tendência | 0 · 0 · não | 0 · 0 · não |
+| Nota no julgamento cego, rodada 1 (plugin v1.0.0) | 8 · 8 | 7 · 7 |
+| Nota no julgamento cego, rodada 2 (plugin v1.1.0) | 6 · 6 | 9 · 8 |
+| Meses ajustados pelos dias (R1 · R2) | não · não | não · **sim** |
 | Roda do zero num kernel novo | sim | sim |
-| Linhas por célula (média / máximo) | 9,8 / 16 | 3,3 / 8 |
-| Textos com `$` que quebra a renderização | 4 | 0 |
-| Contexto e decisões registrados · validado na sessão | não · não | sim · sim |
-| Custo da sessão (mesmo tempo: 2,6 min) | US$ 0,58 | US$ 0,79 |
+| Linhas por célula, média (R1 · R2) | 9,8 · 9,5 | 3,3 · 3,6 |
+| Textos com `$` que quebra a renderização (R1 · R2) | 4 · 2 | 0 · 0 |
+| Contexto registrado · validado na própria sessão | não · não | sim · sim |
+| Custo por sessão (mesmo tempo, ~2,5 min) | ~US$ 0,57 | ~US$ 0,80 |
 
-**Leitura honesta:** no conteúdo analítico, empate — o modelo já acerta o básico
-sem o plugin, e o avaliador cego deu um ponto a mais à versão sem ele, numa única
-execução. O ganho medido do plugin está na **forma e na rastreabilidade**: células
-revisáveis, nenhum texto quebrado para a diretoria (sem o plugin, o principal
-achado aparece assim no Jupyter: "R9,83mi,∗∗2,2vezes∗∗oSul…") e decisões
-registradas para a próxima sessão, a 35% a mais de custo. Os dois lados — inclusive
-o plugin — compararam meses pelo total sem ajustar pelos dias.
+**Leitura honesta:**
+
+- **A rodada 1 virou melhoria.** Os dois lados compararam meses pelo total sem
+  ajustar pelos dias, e o avaliador deu um ponto a mais à versão sem plugin. As
+  duas falhas que escaparam — meses sem ajuste e taxa sem contagem — passaram a
+  ser checadas por código no `/validar` (v1.1.0). Na rodada 2, o `/validar`
+  apontou a soma mensal e a própria sessão corrigiu a tabela e a interpretação.
+- **No conteúdo, vantagem moderada.** Média de 7,75 com o plugin contra 7,0 sem.
+  Parte da distância da rodada 2 é variação do lado sem plugin, que caiu de 8
+  para 6 por conta própria.
+- **Na forma e na rastreabilidade, a vantagem se repetiu nas duas rodadas:**
+  células revisáveis, nenhum texto quebrado para a diretoria (sem o plugin, o
+  principal achado da rodada 1 aparece assim no Jupyter:
+  "R9,83mi,∗∗2,2vezes∗∗oSul…") e decisões registradas para a próxima sessão.
+  O custo é cerca de 40% maior.
 
 ## Evidências técnicas
 
@@ -88,7 +98,7 @@ o plugin — compararam meses pelo total sem ajustar pelos dias.
 |---|---|
 | Início do servidor Jupyter MCP | **~125 s → 2,6 s**. A causa era o servidor esperando 120 s por um Jupyter que ainda não existia; resolvido com `START_NEW_CODE_SANDBOX=false` |
 | Kernel usado pelas células | Corrigido: um kernel `python3` do usuário ganhava do kernel do projeto e rodava as células no Python do sistema, sem as dependências |
-| Testes | 19 testes de unidade (regras, hooks, preparação do projeto, configuração de banco) + teste de fumaça que executa uma célula pelo Jupyter MCP |
+| Testes | 28 testes de unidade (regras de casa e da revisão crítica, hooks, preparação do projeto, configuração de banco) + teste de fumaça que executa uma célula pelo Jupyter MCP |
 | CI | Passa em **Linux, macOS e Windows**: bootstrap do ambiente, ciclo pelo Jupyter MCP, `/validar` sem avisos, `/relatorio`, `/painel` e validação estrita dos manifestos (status no selo acima) |
 | Sessão real do Claude Code | Plugin carregado com `--plugin-dir`: regras injetadas no início, hook disparando nas duas regras, Jupyter desligado ao fechar |
 | Somente leitura nos bancos | `DELETE` bloqueado num arquivo DuckDB, tanto pela biblioteca do notebook quanto pelo servidor MCP. No Postgres, a conexão abre com transação somente leitura (sem teste contra banco real — ver limitações) |
@@ -167,10 +177,11 @@ O plugin fica instalado para o usuário, mas só age em pastas de análise (com
 - **Fechar uma sessão desliga o Jupyter** das outras sessões abertas no mesmo projeto.
 - **O hook em `edit_cell_source` é melhor esforço**: a ferramenta devolve só um
   diff; o `/validar` cobre o notebook inteiro no fim.
-- **A revisão crítica depende de o modelo seguir a skill.** Na
-  [comparação](comparacao/), o plugin não aplicou a regra de comparar meses por
-  dia nem mostrou o `n` em todas as tabelas; só as regras checadas por código
-  (tamanho de célula, `$`) são garantidas.
+- **Só o que é checado por código é garantido.** Tamanho de célula, `$`, soma
+  por mês sem ajuste e taxa sem contagem são conferidos pelo hook ou pelo
+  `/validar`; o resto da revisão crítica depende de o modelo seguir a skill — na
+  [comparação](comparacao/), a versão com plugin da rodada 2 deixou a margem de
+  fora e arredondou uma faixa de valores excluindo uma região.
 - Textos, comandos e regras estão em **português**.
 
 ## Estrutura

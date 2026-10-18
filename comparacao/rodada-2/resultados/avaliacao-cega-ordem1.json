@@ -1,0 +1,35 @@
+{
+  "modelo": [
+    "claude-sonnet-5-5"
+  ],
+  "custo_usd": 0.3297,
+  "avaliacao": {
+    "A": {
+      "numeros_divergentes": 0,
+      "causa_sem_base": 0,
+      "pico_lido_como_tendencia": false,
+      "meses_sem_normalizar": false,
+      "n_visivel": "sempre",
+      "volume_ou_ticket": true,
+      "vendas_sem_regiao": true,
+      "jargao": 0,
+      "conclusao_acionavel": true,
+      "nota": 9,
+      "justificativa": "Os números conferem com os resultados mostrados. Normaliza os meses por dia, mostra o nº de vendas, separa volume de ticket, trata as 154 vendas sem região e deixa claros os limites de um ano só."
+    },
+    "B": {
+      "A": null,
+      "numeros_divergentes": 2,
+      "causa_sem_base": 0,
+      "pico_lido_como_tendencia": false,
+      "meses_sem_normalizar": true,
+      "n_visivel": "às vezes",
+      "volume_ou_ticket": false,
+      "vendas_sem_regiao": true,
+      "jargao": 2,
+      "conclusao_acionavel": true,
+      "nota": 6,
+      "justificativa": "Boa conclusão e alerta correto sobre sazonalidade, mas compara meses pelo total, não explica se o Sudeste lidera por volume ou ticket, e afirma margem de ≈36% em todas as regiões e canais sem mostrar esse resultado."
+    }
+  }
+}

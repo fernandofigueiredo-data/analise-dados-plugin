@@ -75,6 +75,10 @@ mensal["variação %"] = (mensal["atual"] / mensal["mesmo mês, ano anterior"] -
 mensal.tail(12)
 ```
 
+O `/validar` confere duas destas regras por código no notebook inteiro: soma
+por mês sem ajuste pelos dias e taxa/média/percentual sem a contagem ao lado.
+Não espere por ele — aplique já na célula que responde à pergunta.
+
 Se a coluna do ano anterior sair vazia (`NaN`), os dados não cobrem o ano
 anterior: a comparação não é possível — diga isso na interpretação em vez de
 comparar com o mês vizinho.

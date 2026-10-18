@@ -13,7 +13,8 @@ Saída: 0 = rodou inteiro · 1 = alguma célula deu erro · 2 = notebook não en
 import os, re, subprocess, sys
 from pathlib import Path
 from _jupyter import PROJ, jupyter_env
-from regras import linhas_de_codigo, problemas_codigo, problemas_markdown
+from regras import (linhas_de_codigo, problemas_codigo, problemas_markdown, meses_sem_ajuste_por_dia,
+                    tabela_taxa_sem_n, MSG_MESES, MSG_TAXA_SEM_N)
 
 os.environ.update(jupyter_env())  # kernel do .venv, antes de importar o Jupyter
 
@@ -63,9 +64,11 @@ def avisos_output(o):
         m = re.search(r"(\w+(?:Warning|Error)): (.+)", o.text)
         return [f"emitiu um aviso do Python — {m.group(1)}: {m.group(2)[:80]}"] if m else []
     if "text/html" in data:
-        linhas = data["text/html"].count("<tr")
-        return [f"tabela com ~{linhas} linhas no output — mostre .head() ou um top N"] \
+        html = data["text/html"]
+        linhas = html.count("<tr")
+        av = [f"tabela com ~{linhas} linhas no output — mostre .head() ou um top N"] \
             if linhas > MAX_LINHAS_TABELA else []
+        return av + ([MSG_TAXA_SEM_N] if tabela_taxa_sem_n(html) else [])
     texto = o.get("text", "") if o.output_type == "stream" else data.get("text/plain", "")
     av = []
     if texto.count("\n") > MAX_LINHAS_TEXTO:
@@ -95,9 +98,14 @@ def avisos(nb):
                 av.append((i, f"{seguidos} resultados seguidos sem markdown — falta pergunta ou interpretação?"))
         for o in outputs:
             av += [(i, m) for m in avisos_output(o)]
+    codigo = [(i, c.source) for i, c in enumerate(nb.cells) if c.cell_type == "code"]
+    textos = [c.source for c in nb.cells if c.cell_type == "markdown"]
+    sem_ajuste = meses_sem_ajuste_por_dia([s for _, s in codigo], textos)
+    if sem_ajuste is not None:
+        av.append((codigo[sem_ajuste][0], MSG_MESES))
     if nb.cells and nb.cells[-1].cell_type != "markdown":
         av.append((len(nb.cells) - 1, "o notebook não termina com uma conclusão em markdown"))
-    return av
+    return list(dict.fromkeys(av))  # a mesma célula pode repetir a tabela em dois outputs
 
 def main():
     caminho = resolver(sys.argv[1] if len(sys.argv) > 1 else None)

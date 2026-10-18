@@ -1,0 +1,34 @@
+{
+  "modelo": [
+    "claude-sonnet-5-5"
+  ],
+  "custo_usd": 0.3295,
+  "avaliacao": {
+    "A": {
+      "numeros_divergentes": 0,
+      "causa_sem_base": 0,
+      "pico_lido_como_tendencia": false,
+      "meses_sem_normalizar": true,
+      "n_visivel": "às vezes",
+      "volume_ou_ticket": false,
+      "vendas_sem_regiao": true,
+      "jargao": 1,
+      "conclusao_acionavel": true,
+      "nota": 6,
+      "justificativa": "Os números conferem e há aviso claro de que um só ano não separa sazonalidade de tendência, mas compara meses pelo total sem ajustar o tamanho do mês, não explica se o Sudeste lidera por volume ou ticket (só para os meses) e afirma que a margem é igual em todas as regiões e canais sem mostrar esse resultado."
+    },
+    "B": {
+      "numeros_divergentes": 1,
+      "causa_sem_base": 0,
+      "pico_lido_como_tendencia": false,
+      "meses_sem_normalizar": false,
+      "n_visivel": "às vezes",
+      "volume_ou_ticket": true,
+      "vendas_sem_regiao": true,
+      "jargao": 0,
+      "conclusao_acionavel": true,
+      "nota": 8,
+      "justificativa": "Os números conferem, exceto o 'entre R$ 4.800 e R$ 5.200', que deixa de fora o Centro-Oeste (R$ 5.231). Normaliza o faturamento por dia, mostra o nº de vendas nos rankings, explica que a liderança do Sudeste vem do volume, trata as 154 vendas sem região e diz o que não dá para concluir, o que o torna bem mais confiável para decidir."
+    }
+  }
+}

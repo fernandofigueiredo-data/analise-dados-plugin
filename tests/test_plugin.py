@@ -47,6 +47,51 @@ class TestRegras(unittest.TestCase):
         self.assertEqual(regras.problemas_markdown("```\ncusto = 'R$'\n```"), [])
 
 
+def tabela(*colunas):
+    """HTML de cabeçalho no formato do DataFrame.to_html() do pandas."""
+    ths = "".join(f"<th>{c}</th>" for c in colunas)
+    return f'<table><thead><tr style="text-align: right;"><th></th>{ths}</tr></thead><tbody></tbody></table>'
+
+
+class TestRevisaoCriticaPorCodigo(unittest.TestCase):
+    SOMA_MES = 'mes = df.groupby("mes")["faturamento"].sum()'
+
+    def test_soma_por_mes_sem_ajuste_aponta(self):
+        self.assertEqual(regras.meses_sem_ajuste_por_dia(["import pandas as pd", self.SOMA_MES], []), 1)
+
+    def test_pivot_por_mes_somando_aponta(self):
+        fonte = "df.pivot_table(index='regiao', columns='mes', values='faturamento', aggfunc='sum')"
+        self.assertEqual(regras.meses_sem_ajuste_por_dia([fonte], []), 0)
+
+    def test_resample_mensal_somando_aponta(self):
+        fonte = 'df.set_index("data").resample("MS")["faturamento"].sum()'
+        self.assertEqual(regras.meses_sem_ajuste_por_dia([fonte], []), 0)
+
+    def test_ajuste_por_dia_no_codigo_resolve(self):
+        ajuste = 'mensal["por dia"] = mensal["faturamento"] / mensal.index.days_in_month'
+        self.assertIsNone(regras.meses_sem_ajuste_por_dia([self.SOMA_MES, ajuste], []))
+
+    def test_explicacao_no_texto_resolve(self):
+        texto = "Os meses têm tamanhos diferentes, mas a diferença de dias não muda a conclusão."
+        self.assertIsNone(regras.meses_sem_ajuste_por_dia([self.SOMA_MES], [texto]))
+
+    def test_media_por_mes_nao_precisa_de_ajuste(self):
+        fonte = 'df.groupby("mes")["ticket"].mean()'
+        self.assertIsNone(regras.meses_sem_ajuste_por_dia([fonte], []))
+
+    def test_taxa_sem_contagem_aponta(self):
+        self.assertTrue(regras.tabela_taxa_sem_n(tabela("Margem")))
+        self.assertTrue(regras.tabela_taxa_sem_n(tabela("% do ano em Nov-Dez")))
+
+    def test_taxa_com_contagem_passa(self):
+        self.assertFalse(regras.tabela_taxa_sem_n(tabela("vendas", "margem %")))
+        self.assertFalse(regras.tabela_taxa_sem_n(tabela("Faturamento", "% do total", "Nº de vendas")))
+        self.assertFalse(regras.tabela_taxa_sem_n(tabela("count", "mean", "25%", "max")))  # describe()
+
+    def test_tabela_sem_taxa_passa(self):
+        self.assertFalse(regras.tabela_taxa_sem_n(tabela("faturamento", "por dia")))
+
+
 class TestHookCelula(unittest.TestCase):
     def test_insert_codigo_longo_avisa_o_claude(self):
         r = hook("insert_cell", {"cell_index": 3, "cell_type": "code", "cell_source": LONGA})

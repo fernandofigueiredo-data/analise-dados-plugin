@@ -30,7 +30,13 @@ navegador e o kernel ao vivo não são tocados.
 
 Os avisos apontam desvios das regras do `REGRAS.md` (célula longa, `$` sem
 escape, Series crua, dump de tabela, resultado sem interpretação, falta de
-conclusão). Os índices das células começam em 0, como no Jupyter MCP.
+conclusão) e duas checagens da skill `revisao-critica`: **soma por mês sem
+ajustar pelos dias** e **tabela com taxa, média ou percentual sem a contagem
+(n) ao lado**. Os índices das células começam em 0, como no Jupyter MCP.
+
+Nas duas checagens da revisão crítica, corrigir é mexer no conteúdo: adicione
+a coluna por dia (ou a contagem) na própria célula, execute, releia o
+resultado e **reveja a interpretação** — o achado pode mudar.
 
 - Corrija os que forem legítimos, pelo Jupyter MCP.
 - Se decidir manter algum (ex.: uma função que justifica célula longa), diga

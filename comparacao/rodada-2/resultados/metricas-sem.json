@@ -1,0 +1,16 @@
+{
+  "roda_do_zero": true,
+  "celulas_codigo": 10,
+  "celulas_markdown": 15,
+  "linhas_por_celula_media": 9.5,
+  "linhas_por_celula_max": 17,
+  "celulas_acima_de_10_linhas": 4,
+  "blocos_de_resultado_seguidos_de_texto_pct": 100,
+  "markdown_com_cifrao_sem_escape": 2,
+  "termos_de_jargao": 0,
+  "termina_com_conclusao": false,
+  "avisos_das_regras_de_casa": 9,
+  "tempo_min": 2.3,
+  "custo_usd": 0.57,
+  "turnos": 12
+}
